@@ -96,6 +96,7 @@ class SingleLinkedList {
         // Инкремент итератора, не указывающего на существующий элемент списка, приводит к неопределённому поведению
         BasicIterator& operator++() noexcept {
             // Заглушка. Реализуйте оператор самостоятельно
+            assert(node_ != nullptr);
             node_ = node_->next_node;
             return *this;
         }
@@ -116,6 +117,7 @@ class SingleLinkedList {
         // приводит к неопределённому поведению
         [[nodiscard]] reference operator*() const noexcept {
             // Заглушка. Реализуйте оператор самостоятельно
+            assert(node_ != nullptr);
             return node_->value;
         }
 
@@ -124,6 +126,7 @@ class SingleLinkedList {
         // приводит к неопределённому поведению
         [[nodiscard]] pointer operator->() const noexcept {
             // Заглушка. Реализуйте оператор самостоятельно
+            assert(node_ != nullptr);
             return &node_->value;
         }
 
@@ -253,6 +256,7 @@ public:
     Iterator InsertAfter(ConstIterator pos, const Type& value) {
         // Заглушка. Реализуйте метод самостоятельно
         Node* node = pos.node_;
+        assert(node != nullptr);
         if (node == nullptr) {
             PushFront(value);
             return begin();
@@ -281,6 +285,7 @@ public:
     Iterator EraseAfter(ConstIterator pos) noexcept {
         // Заглушка. Реализуйте метод самостоятельно
         Node* node = pos.node_;
+        assert(node != nullptr);
         if (node != nullptr && node->next_node != nullptr) {
             Node* erased_node = node->next_node;
             node->next_node = erased_node->next_node;
@@ -330,16 +335,13 @@ private:
 
     template<typename T>
     SingleLinkedList Copy(T& list){
-        SingleLinkedList reversed;
-        for(auto elem = list.begin(); elem != list.end(); elem++){
-            reversed.PushFront(*elem);
-        }
         SingleLinkedList result;
-        for(auto elem = reversed.begin(); elem != reversed.end(); elem++){
-            result.PushFront(*elem);
-        }
-        return result;
+    auto current = list.begin();
+    while (current != list.end()) {
+        result.InsertAfter(result.begin(), *current);
+        ++current;
     }
+    return result;
 };
 
 // внешние функции разместите здесь
